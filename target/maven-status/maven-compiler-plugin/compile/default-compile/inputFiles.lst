@@ -1,0 +1,10 @@
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/repository/UserRepository.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/MainServlet.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/Admin.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/LoginServerlet.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/Guest.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/RequestDto.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/eGender.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/LoginDto.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/service/UserService.java
+/home/kwizera/Desktop/projects/serverltTest/src/main/java/rw/kwizera/model/User.java

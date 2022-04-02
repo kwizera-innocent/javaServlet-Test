@@ -2,9 +2,7 @@ package rw.kwizera;
 
 import com.google.gson.Gson;
 import org.apache.commons.beanutils.BeanUtils;
-import rw.kwizera.model.Admin;
-import rw.kwizera.model.Guest;
-import rw.kwizera.model.RequestDto;
+import rw.kwizera.model.*;
 import rw.kwizera.service.UserService;
 
 import javax.servlet.ServletException;
@@ -14,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MainServlet extends HttpServlet {
@@ -37,10 +33,28 @@ public class MainServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String reqBody = req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        setAccessControlHeaders(resp);
+        String action = req.getParameter("ACTION");
+        if (action != null && action.equalsIgnoreCase("login")){
+            this.login(reqBody, resp);
+        } else this.register(reqBody, resp);
+    }
+
+    private void login(String reqBody ,HttpServletResponse resp){
+        Gson gson = new Gson();
+        LoginDto loginBody =gson.fromJson(reqBody, LoginDto.class);
+
+        User userLoggedIn = userService.login(loginBody);
 
         int rc = HttpServletResponse.SC_OK;
-        RequestDto requestBody = gson.fromJson(reqBody, RequestDto.class);
+        if(userLoggedIn == null)
+            this.outputResponse(resp, "username or password not correct", HttpServletResponse.SC_BAD_REQUEST);
+        else this.outputResponse(resp, gson.toJson(userLoggedIn), 200);
+    }
 
+    private void register(String reqBody ,HttpServletResponse resp) {
+        int rc = HttpServletResponse.SC_OK;
+        RequestDto requestBody = gson.fromJson(reqBody, RequestDto.class);
         try {
             if (requestBody.getRole().equalsIgnoreCase("admin")){
                 Admin request = new Admin();
@@ -66,6 +80,18 @@ public class MainServlet extends HttpServlet {
         }
     }
 
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        setAccessControlHeaders(resp);
+        resp.setStatus(HttpServletResponse.SC_OK);
+    }
+
+    private void setAccessControlHeaders(HttpServletResponse resp) {
+        resp.setHeader("Access-Control-Allow-Origin", "*");
+        resp.setHeader("Access-Control-Allow-Methods", "*");
+        resp.setHeader("Access-Control-Allow-Headers","*");
+    }
 
     private void outputResponse(HttpServletResponse response, String payload, int status) {
         response.setHeader("Content-Type", "application/json");

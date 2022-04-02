@@ -1,6 +1,5 @@
 package rw.kwizera.service;
 
-import rw.kwizera.LoginServerlet;
 import rw.kwizera.model.*;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,9 +51,21 @@ public class UserService {
 
     public User login(LoginDto loginBody) {
         Admin admin = new Admin();
-        boolean isLoggedIn = admin.login(loginBody.getPassword(), this.users.get(loginBody.getUserName()));
-        if(isLoggedIn)
-            return this.users.get(loginBody.getUserName());
-        return null;
+        Guest guest = new Guest();
+        ConcurrentMap<String, User> users1 = findAllUsers();
+        if(users1.containsKey(loginBody.getUserName())){
+//        if(this.users.containsKey(loginBody.getUserName())){
+            User user = this.users.get(loginBody.getUserName());
+            boolean isLoggedIn = false;
+
+            if (user.getRole().equalsIgnoreCase("admin"))
+                isLoggedIn = admin.login(loginBody.getPassword(), user);
+            else isLoggedIn = guest.login(loginBody.getPassword(), user);
+
+            if(isLoggedIn)
+                return user;
+            else return null;
+        } else
+            return null;
     }
 }
